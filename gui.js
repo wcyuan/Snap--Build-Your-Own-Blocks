@@ -4205,6 +4205,8 @@ IDE_Morph.prototype.toggleAppMode = function (appMode) {
             this.controlBar.settingsButton,
             this.controlBar.stageSizeButton,
             this.paletteHandle,
+            // CHANGED(conan): Once you enter app mode, remove the button to leave it.
+            this.controlBar.appModeButton,
             this.stageHandle,
             this.corral,
             this.corralBar,
