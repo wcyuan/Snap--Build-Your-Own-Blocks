@@ -7,9 +7,9 @@
 	written by Jens Mönig
 	jens@moenig.org
 
-	Copyright (C) 2016 by Jens Mönig
+	Copyright (C) 2017 by Jens Mönig
 
-	this documentation last changed: July 14, 2016
+	this documentation last changed: September 01, 2017
 
 	This file is part of Snap!.
 
@@ -56,7 +56,8 @@
         (7) turtle graphics
         (8) damage list housekeeping
         (9) supporting high-resolution "retina" screens
-        (10) minifying morphic.js
+        (10 animations
+        (11) minifying morphic.js
     VIII. acknowledgements
     IX. contributors
 
@@ -67,6 +68,7 @@
     indentation indicating inheritance. Refer to this list to get a
     contextual overview:
 
+    Animation
     Color
     Node
         Morph
@@ -109,6 +111,7 @@
     Global settings
     Global functions
 
+    Animation
     Color
     Point
     Rectangle
@@ -549,10 +552,23 @@
 
     Right before a morph is picked up its
 
+        selectForEdit
+
+    and
+
         prepareToBeGrabbed(handMorph)
 
-    method is invoked, if it is present. Immediately after the pick-up
-    the former parent's
+    methods are invoked, each if it is present. the optional
+
+        selectForEdit
+
+    if implemented, must return the object that is to be picked up.
+    In addition to just returning the original object chosen by the user
+    your method can also modify the target's environment and instead return
+    a copy of the selected morph if, for example, you would like to implement
+    a copy-on-write mechanism such as in Snap.
+
+    Immediately after the pick-up the former parent's
 
         reactToGrabOf(grabbedMorph)
 
@@ -580,6 +596,17 @@
         wantsDropOf(aMorph)
 
     method.
+
+    Right before dropping a morph the designated new parent's optional
+
+        selectForEdit
+
+    method is invoked if it is present. Again, if implemented this method
+    must return the new parent for the morph that is about to be dropped.
+    Again, in addition to just returning the designeted drop-target
+    your method can also modify its environment and instead return
+    a copy of the new parent if, for example, you would like to implement
+    a copy-on-write mechanism such as in Snap.
 
     Right after a morph has been dropped its
 
@@ -1036,7 +1063,37 @@
     stage (high-resolution) into a sprite-costume (normal resolution).
 
 
-    (10) minifying morphic.js
+    (10) animations
+    ---------------
+    Animations handle gradual transitions between one state and another over a
+    period of time. Transition effects can be specified using easing functions.
+    An easing function maps a fraction of the transition time to a fraction of
+    the state delta. This way accelerating / decelerating and bouncing sliding
+    effects can be accomplished.
+
+    Animations are generic and not limited to motion, i.e. they can also handle
+    other transitions such as color changes, transparency fadings, growing,
+    shrinking, turning etc.
+
+    Animations need to be stepped by a scheduler, e. g. an interval function.
+    In Morphic the preferred way to run an animation is to register it with
+    the World by adding it to the World's animation queue. The World steps each
+    registered animation once per display cycle independently of the Morphic
+    stepping mechanism.
+
+    For an example how to use animations look at how the Morph's methods
+    
+        glideTo()
+        fadeTo()
+
+    and
+    
+        slideBackTo()
+
+    are implemented.
+
+
+    (11) minifying morphic.js
     -------------------------
     Coming from Smalltalk and being a Squeaker at heart I am a huge fan
     of browsing the code itself to make sense of it. Therefore I have
@@ -1096,5 +1153,6 @@
     Davide Della Casa contributed performance optimizations for Firefox.
     Jason N (@cyderize) contributed native copy & paste for text editing.
     Bartosz Leper contributed retina display support.
+    Brian Harvey contributed to the design and implementation of submenus.
 
     - Jens Mönig
